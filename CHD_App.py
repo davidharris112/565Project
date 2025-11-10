@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
+import pickle
+
 
 # Suppress warnings
 import warnings
@@ -18,7 +20,7 @@ st.title('Coronary Heart Disease Predictor')
 # generic structure for loading pickle file of each model
 # this has helped me avoid issues with pickle when deploying to streamlit
 BASE_DIR = os.path.dirname(__file__)
-pickle_path = os.path.join(BASE_DIR, "model.pickle")
+pickle_path = os.path.join(BASE_DIR, "decision_tree_chd.pickle")
 with open(pickle_path, "rb") as model_pickle:
     model_clf = pickle.load(model_pickle)
 
@@ -42,22 +44,29 @@ with st.sidebar.expander("Option 1: Upload CSV File"):
 # I'll mess around with the different input types
 # toggles might be good for the binary categorical responses
 with st.sidebar.expander("Option 2: Fill Out Form"):
-    st.write("Enter the data manually using the form below.")
+    st.write("Enter the risk indicators manually using the form below.")
     with st.form(key='input_form'):
 
         # Categorical inputs
-        male = st.selectbox('Gender', options = [0,1], help     ="0 = Female , 1 =    Male")    
-        education = st.selectbox('Education Level', options = [1,2,3,4], help="1 = < 11 years , 2 = 11-15 years , 3 = 16+ years , 4 = college")
-        currentSmoker = st.selectbox('Current Smoker', options = [0,1], help="0 = No , 1 = Yes")
-        BPMeds = st.selectbox('On Blood Pressure Medication', options = [0,1], help="0 = No , 1 = Yes")
-        prevalentStroke = st.selectbox('Prevalent Stroke', options = [0,1], help="0 = No , 1 = Yes")        
-        prevalentHyp = st.selectbox('Prevalent Hypertension', options = [0,1], help="0 = No , 1 = Yes")
-        diabetes = st.selectbox('Diabetes', options = [0,1], help="0 = No , 1 = Yes")
 
-        # Numerical Inputs
+
+        male = st.toggle('Male?') 
         age = st.number_input('Age (in years)', help="Age in years")
-        if currentSmoker ==1:
-            cigsPerDay = st.number_input('Cigarettes per day', help="Number of cigarettes smoked per day")
+        # TODO confirm education level categories 
+        education = st.selectbox('Education Level', options = [1,2,3,4], help="1 = Some High School , 2 = High School Graduate , 3 = Some College , 4 = College Graduate")
+        
+        
+        currentSmoker = st.toggle('Current Smoker?')
+        st.write("If you are a current smoker, please specify the number of cigarettes smoked per day.")
+        cigsPerDay = st.number_input('Cigarettes per day', help="Number of cigarettes smoked per day")
+
+        BPMeds = st.toggle('On Blood Pressure Medication?')
+
+        prevalentStroke = st.toggle('Prevalent Stroke?')
+        prevalentHyp = st.toggle('Prevalent Hypertension?')
+        diabetes = st.toggle('Diabetic?')
+
+
         totChol = st.number_input('Total Cholesterol (mg/dL)', help="Total cholesterol in mg/dL")   
         sysBP = st.number_input('Systolic Blood Pressure (mm Hg)', help="Systolic blood pressure in mm Hg")   
         diaBP = st.number_input('Diastolic Blood Pressure (mm Hg)', help="Diastolic blood pressure in mm Hg")  
@@ -66,3 +75,41 @@ with st.sidebar.expander("Option 2: Fill Out Form"):
         glucose = st.number_input('Glucose (mg/dL)', help="Glucose in mg/dL")   
         
         predict_button = st.form_submit_button("Submit Form Data")  
+
+st.write("Input Summary for debugging")
+st.write("{male}, {education}, {currentSmoker}, {BPMeds}, {prevalentStroke}, {prevalentHyp}, {diabetes}, {age}, {cigsPerDay}, {totChol}, {sysBP}, {diaBP}, {BMI}, {heartRate}, {glucose}".format(male=male, education=education, currentSmoker=currentSmoker, BPMeds=BPMeds, prevalentStroke=prevalentStroke, prevalentHyp=prevalentHyp, diabetes=diabetes, age=age, cigsPerDay=cigsPerDay, totChol=totChol, sysBP=sysBP, diaBP=diaBP, BMI=BMI, heartRate=heartRate, glucose=glucose))
+
+if heart_file is not None:
+    # if we have a file upload, proceed with that data
+    heart_df = pd.DataFrame(pd.read_csv(heart_file))
+    st.success("File uploaded successfully.")
+if heart_file is None and predict_button:
+    # if we don't have a file but the form was submitted, use the form data
+    # Create a DataFrame from the form inputs
+    input_data = {
+        "male": male,
+        "age": age,
+        "education": education,
+        "currentSmoker": currentSmoker,
+        "cigsPerDay": cigsPerDay,
+        "BPMeds": BPMeds,
+        "prevalentStroke": prevalentStroke,
+        "prevalentHyp": prevalentHyp,
+        "diabetes": diabetes,
+        "totChol": totChol,
+        "sysBP": sysBP,
+        "diaBP": diaBP,
+        "BMI": BMI,
+        "heartRate": heartRate,
+        "glucose": glucose
+    }
+    # replace trues/false with 1/0
+    for key in input_data:
+        if isinstance(input_data[key], bool):
+            input_data[key] = int(input_data[key])
+    heart_df = pd.DataFrame([input_data])
+    st.success("Form data submitted successfully.")
+    st.write(heart_df.head())
+
+if heart_file is None and not predict_button:
+    st.info("Please upload a CSV file or fill out the form to proceed.")
