@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore")
 
 
 
-st.set_page_config(page_title="Home", page_icon="✈️")   # change icon to heart
+st.set_page_config(page_title="Home", page_icon="❤️")   # change icon to heart
 
 # title & subtitle
 # Centered Title using HTML and Markdown
@@ -30,6 +30,12 @@ st.markdown(
 
 if 'default_df' not in st.session_state:
     st.session_state['default_df'] = pd.read_csv('framingham.csv')
+if 'input_type' not in st.session_state:
+    st.session_state['input_type'] = 'Form'  # Default input type
+if 'model_type' not in st.session_state:
+    st.session_state['model_type'] = "Decision Tree"
+
+
 if 'male' not in st.session_state:
     st.session_state['male'] = 1  # Default male value
 if 'age' not in st.session_state:
@@ -54,6 +60,18 @@ if 'sysBP' not in st.session_state:
     st.session_state['sysBP'] = 30
 if 'diaBP' not in st.session_state:
     st.session_state['diaBP'] = 30
+if 'BMI' not in st.session_state:
+    st.session_state['BMI'] = 30
+if 'heartRate' not in st.session_state:
+    st.session_state['heartRate'] = 30
+if 'glucose' not in st.session_state:
+    st.session_state['glucose'] = 30
+
+
+if 'form_submitted' not in st.session_state:
+    st.session_state['form_submitted'] = False # Track if form is submitted
+if 'csv' not in st.session_state:
+    st.session_state['csv'] = False  #indicated if a csv has been uploaded or not
 
 
 

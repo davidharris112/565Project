@@ -1,0 +1,163 @@
+import streamlit as st
+import pandas as pd
+import pickle
+import warnings
+warnings.filterwarnings('ignore')
+
+st.set_page_config(page_title = "Make Predictions", page_icon = "🔎")
+
+# # Ensure session state keys are initialized
+if 'form_submitted' not in st.session_state:
+    st.session_state['form_submitted'] = False
+
+# # Check if the form has been submitted
+# if st.session_state['form_submitted'] == False:
+#     st.warning("Please fill out the form on the 'Upload Data' page before viewing predictions.")
+#     st.stop()
+
+model_type = st.selectbox("Select Your Machine Learning Model", options=["Decision Tree", "Soft Vote Classifier"])
+
+if model_type=="Decision Tree":
+    with open('decision_tree_chd.pickle', 'rb') as model_file:
+        clf = pickle.load(model_file)
+if model_type=="Soft Vote Classifier":
+    with open('SoftVote_chd.pickle', 'rb') as model_file:
+        clf = pickle.load(model_file)
+else:
+    st.warning("Please select which machine learning model you would like to use.")
+# Load the trained model and dataset
+
+
+# in the case that no csv or form was submitted:
+if st.session_state['csv'] is False and st.session_state['form_submitted'] == False:
+    st.warning("Data was not received, please try again in the 'Input Data' page")
+
+# if one of them was submitted, let user choose model from dropdown
+else:
+    if model_type=="Decision Tree":
+        with open('decision_tree_chd.pickle', 'rb') as model_file:
+            clf = pickle.load(model_file)
+    if model_type=="Soft Vote Classifier":
+        with open('SoftVote_chd.pickle', 'rb') as model_file:
+            clf = pickle.load(model_file)
+    # if no model was chosen, prompt uier
+    else:
+        st.warning("Please select which machine learning model you would like to use.")
+        st.stop
+
+# need to check the logic/flow of all the above loops
+
+# If some form of data was inputted (CSV or form) and a model has been selected ...
+#  if inputing form and it was submitted sucessfully
+if st.session_state['input_type'] == 'Form' and st.session_state['form_submitted'] == True:
+    
+    default_df = st.session_state['default_df']
+    # Prepare user input data
+    user_data = {
+        'male': st.session_state['male'],
+        'age': st.session_state['age'],
+        'education': st.session_state['education'],
+        'currentSmoker': st.session_state['currentSmoker'],
+        'cigsPerDay': st.session_state['cigsPerDay'],
+        'BPMeds': st.session_state['BPMeds'],
+        'prevalentStroke': st.session_state['prevalentStroke'],
+        'prevalentHyp': st.session_state['prevalentHyp'],
+        'diabetes': st.session_state['diabetes'],
+        'totChol': st.session_state['totChol'],
+        'sysBP': st.session_state['sysBP'],
+        'diaBP': st.session_state['diaBP'],
+        'BMI': st.session_state['BMI'],
+        'heartRate': st.session_state['heartRate'],
+        'glucose': st.session_state['glucose']
+    }
+
+    user_df = pd.DataFrame([user_data])
+        # st.write("User Input Data:")
+        # st.dataframe(user_df.head())
+    # Encode the inputs for model prediction
+    encode_df = default_df.copy()
+    encode_df = encode_df.drop(columns = ['TenYearCHD'])
+    
+
+    # Combine the list of user data as a row to default_df
+    encode_df.loc[len(encode_df)] = user_df.iloc[0].values
+        # st.write("Combined Data for Encoding:")
+        # st.dataframe(encode_df.head())
+
+    # Create dummies for encode_df
+    encode_dummy_df = pd.get_dummies(encode_df)
+        # st.write("Encoded Data:")
+        # st.dataframe(encode_dummy_df.head())
+    
+    # Extract encoded user data
+    user_encoded_df = encode_dummy_df.tail(1)
+        # st.write("Encoded User Data:")
+        # st.dataframe(user_encoded_df.head())
+
+    # Using predict() with new data provided by the user
+    new_prediction = clf.predict(user_encoded_df)
+
+    # predict satisfaction
+    prediction_class = new_prediction[0]
+
+    # Predict satisfaction probability
+    # Get probability of the predicted class
+    proba = clf.predict_proba(user_encoded_df)
+    class_index = list(clf.classes_).index(prediction_class)
+    predicted_class_proba = proba[class_index]
+
+    # Show the predicted species on the app
+    st.subheader("Predicting The Individual's 10 Year Coronary Heart Disease Risk")
+    if new_prediction[0]==1:
+        st.success(f'We predict the individual is at risk.'
+                    f'(Probability: {predicted_class_proba[0]:.2f})')
+    if new_prediction[0]==0:
+        st.success(f'We predict the individual is not risk.'
+                    f'(Probability: {predicted_class_proba[0]:.2f})')
+
+# if uploading CSV and it was uploaded successfully
+if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] == True:
+    user_df = pd.DataFrame(st.session_state['Uploaded_Data'])
+    original_df = pd.read_csv('airline.csv') # Original data used to create ML model
+    original_df = original_df.drop(columns = ['satisfaction'])
+
+    # Concatenate two dataframes together along rows (axis = 0)
+    combined_df = pd.concat([original_df, user_df], axis = 0)
+
+    # Number of rows in original dataframe
+    original_rows = original_df.shape[0]
+
+    # create dummies for the combined dataframe
+    combined_df_encoded = pd.get_dummies(combined_df)
+
+    # Splite data into original and user dataframes using row index
+    original_df_encoded = combined_df_encoded[:original_rows]
+    user_df_encoded = combined_df_encoded[original_rows:]
+
+    # Predictions for user data
+    user_pred = clf.predict(user_df_encoded)
+
+    # Add predicted satisfaction to user dataframe
+    user_df['At risk?'] = user_pred
+
+
+    # add prediction probability column
+    # Predict class probabilities
+    proba = clf.predict_proba(user_df_encoded)
+
+    # Get probability of the predicted class
+    class_index = list(clf.classes_).index(user_pred[0])
+    predicted_class_proba = proba[class_index]
+    user_df["Predicted Probability"] = predicted_class_proba[0]
+    
+    # NOTE colormap code from the midterm project (I originally used chatgpt to help with it in the midterm app)
+    color_map = {"1": "red", "0": "green"}
+    user_df = user_df.style.applymap(
+        lambda val: f'background-color: {color_map.get(val, "white")}',
+        subset=['At risk?']
+    )
+    # TODO change 1's to "At Risk" and 0's to "Not At Risk" in "At risk?" column
+    # Show the predicted volume
+    st.subheader("Predicted 10 Year Coronary Heart Disease Risk from Uploaded CSV:")
+    st.dataframe(user_df)
+    st.info("Prediction column is on the far right")
