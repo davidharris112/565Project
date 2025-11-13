@@ -15,37 +15,29 @@ if 'form_submitted' not in st.session_state:
 #     st.warning("Please fill out the form on the 'Upload Data' page before viewing predictions.")
 #     st.stop()
 
-model_type = st.selectbox("Select Your Machine Learning Model", options=["Decision Tree", "Soft Vote Classifier"])
+# Select Model and save to session state
+model_type = st.selectbox("Select Your Machine Learning Model", options=["Decision Tree", "Soft Vote Classifier", "AdaBoost"],value=st.session_state.get('model_type'))
+st.session_state['model_type'] = model_type
 
-if model_type=="Decision Tree":
+# load the correct model
+if st.session_state.get('model_type')=="Decision Tree":
     with open('decision_tree_chd.pickle', 'rb') as model_file:
         clf = pickle.load(model_file)
-if model_type=="Soft Vote Classifier":
+if st.session_state.get('model_type')=="Soft Vote Classifier":
     with open('SoftVote_chd.pickle', 'rb') as model_file:
         clf = pickle.load(model_file)
-else:
-    st.warning("Please select which machine learning model you would like to use.")
-# Load the trained model and dataset
-
+if st.session_state.get('model_type')=="AdaBoost":
+    with open('AdaBoost_chd.pickle', 'rb') as model_file:
+        clf = pickle.load(model_file)
+# NOTE I don't think the "else" is necessary since we start with a default value for model_type in the session state
+# else:
+#     st.warning("Please select which machine learning model you would like to use.")
 
 # in the case that no csv or form was submitted:
 if st.session_state['csv'] is False and st.session_state['form_submitted'] == False:
     st.warning("Data was not received, please try again in the 'Input Data' page")
-
-# if one of them was submitted, let user choose model from dropdown
-else:
-    if model_type=="Decision Tree":
-        with open('decision_tree_chd.pickle', 'rb') as model_file:
-            clf = pickle.load(model_file)
-    if model_type=="Soft Vote Classifier":
-        with open('SoftVote_chd.pickle', 'rb') as model_file:
-            clf = pickle.load(model_file)
-    # if no model was chosen, prompt uier
-    else:
-        st.warning("Please select which machine learning model you would like to use.")
-        st.stop
-
 # need to check the logic/flow of all the above loops
+
 
 # If some form of data was inputted (CSV or form) and a model has been selected ...
 #  if inputing form and it was submitted sucessfully
