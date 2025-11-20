@@ -13,7 +13,6 @@ import pickle
 # warnings.filterwarnings("ignore")
 
 
-
 st.set_page_config(page_title="Home", page_icon="❤️")   # change icon to heart
 
 # title & subtitle

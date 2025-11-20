@@ -29,7 +29,7 @@ if model_type=="Decision Tree":
     # Tab 3: Confusion Matrix
     with tab3:
         st.write("### Confusion Matrix")
-        st.image('confusion_mat_dt.svg')    
+        st.image('confusionMat_dt.svg')    
 
 
     # Tab 4: Classification Report
@@ -54,7 +54,7 @@ if model_type=="Soft Vote Classifier":
     # Tab 2: Confusion Matrix
     with tab2:
         st.write("### Confusion Matrix")
-        st.image('confusion_mat_sv.svg')    
+        st.image('confusionMat_sv.svg')    
 
 if model_type=="AdaBoost":
     # Showing additional items in tabs
@@ -73,7 +73,7 @@ if model_type=="AdaBoost":
     # Tab 3: Confusion Matrix
     with tab2:
         st.write("### Confusion Matrix")
-        st.image('confusion_mat_Ada.svg')
+        st.image('confusionMat_Ada.svg')
         # Tab 4: Classification Report
     with tab3:
         st.write("### Classification Report")
