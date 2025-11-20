@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title = "Upload Data", page_icon= "📊")
+# st.set_page_config(page_title = "Upload Data", page_icon= "📊")
 
 # title & description
 

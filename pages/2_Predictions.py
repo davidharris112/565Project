@@ -4,7 +4,7 @@ import pickle
 import warnings
 warnings.filterwarnings('ignore')
 
-st.set_page_config(page_title = "Make Predictions", page_icon = "🔎")
+# st.set_page_config(page_title = "Make Predictions", page_icon = "🔎")
 
 # # Ensure session state keys are initialized
 if 'form_submitted' not in st.session_state:

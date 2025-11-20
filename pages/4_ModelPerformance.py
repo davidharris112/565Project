@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 
-st.set_page_config(page_title = "Model Insights")
+# st.set_page_config(page_title = "Model Insights")
 
 # Retrieve which model was used
 model_type = st.session_state.get('model_type')
