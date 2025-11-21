@@ -4,7 +4,7 @@ import pickle
 import warnings
 warnings.filterwarnings('ignore')
 
-# st.set_page_config(page_title = "Make Predictions", page_icon = "🔎")
+st.set_page_config(page_title = "Make Predictions", page_icon = "🔎")
 
 # # Ensure session state keys are initialized
 if 'form_submitted' not in st.session_state:
@@ -107,6 +107,7 @@ if st.session_state['input_type'] == 'Form' and st.session_state['form_submitted
         st.success(f'We predict the individual is not risk.'
                     f'(Probability: {predicted_class_proba[0]:.2f})')
 
+    st.session_state['Form Prediction'] = new_prediction[0]
 # if uploading CSV and it was uploaded successfully
 if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] == True:
     user_df = pd.DataFrame(st.session_state['Uploaded_Data'])
@@ -153,3 +154,4 @@ if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] ==
     st.subheader("Predicted 10 Year Coronary Heart Disease Risk from Uploaded CSV:")
     st.dataframe(user_df)
     st.info("Prediction column is on the far right")
+    st.session_state["CSV with Predictions"] = user_df
