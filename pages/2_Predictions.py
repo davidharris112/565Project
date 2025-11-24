@@ -130,8 +130,8 @@ if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] ==
     # Predictions for user data
     user_pred = clf.predict(user_df_encoded)
 
-    # Add predicted satisfaction to user dataframe
-    user_df['At risk?'] = user_pred
+    # Add predicted risk to user dataframe
+    user_df['Risk Prediction'] = user_pred
 
 
     # add prediction probability column
@@ -147,9 +147,14 @@ if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] ==
     color_map = {"1": "red", "0": "green"}
     user_df = user_df.style.applymap(
         lambda val: f'background-color: {color_map.get(val, "white")}',
-        subset=['At risk?']
+        subset=['Risk Prediction']
     )
-    # TODO change 1's to "At Risk" and 0's to "Not At Risk" in "At risk?" column
+    
+    # change 1's to "At Risk" and 0's to "Not At Risk" in "Risk Prediction" column
+    risk_labels = {1: "At Risk", 0: "Not At Risk"}
+    user_df['Risk Prediction'] = user_pred.map(risk_labels)
+
+
     # Show the predicted volume
     st.subheader("Predicted 10 Year Coronary Heart Disease Risk from Uploaded CSV:")
     st.dataframe(user_df)
