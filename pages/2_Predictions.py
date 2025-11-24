@@ -121,8 +121,8 @@ if st.session_state['input_type'] == 'Form' and st.session_state['form_submitted
 # if uploading CSV and it was uploaded successfully
 if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] == True:
     user_df = pd.DataFrame(st.session_state['Uploaded_Data'])
-    original_df = pd.read_csv('airline.csv') # Original data used to create ML model
-    original_df = original_df.drop(columns = ['satisfaction'])
+    original_df = pd.read_csv('framingham.csv') # Original data used to create ML model
+    original_df = original_df.drop(columns = ['TenYearCHD'])
 
     # Concatenate two dataframes together along rows (axis = 0)
     combined_df = pd.concat([original_df, user_df], axis = 0)
@@ -152,21 +152,25 @@ if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] ==
     class_index = list(clf.classes_).index(user_pred[0])
     predicted_class_proba = proba[class_index]
     user_df["Predicted Probability"] = predicted_class_proba[0]
-    
+     
+     
+    risk_labels = {1: "At Risk", 0: "Not At Risk"}
+    user_df['Risk Prediction'] = user_df['Risk Prediction'].map(risk_labels)
+
     # NOTE colormap code from the midterm project (I originally used chatgpt to help with it in the midterm app)
-    color_map = {"1": "red", "0": "green"}
-    user_df = user_df.style.applymap(
+    color_map = {"At Risk": "red", "Not At Risk": "green"}
+    styled_user_df = user_df.style.applymap(
         lambda val: f'background-color: {color_map.get(val, "white")}',
         subset=['Risk Prediction']
     )
     
     # change 1's to "At Risk" and 0's to "Not At Risk" in "Risk Prediction" column
-    risk_labels = {1: "At Risk", 0: "Not At Risk"}
-    user_df['Risk Prediction'] = user_pred.map(risk_labels)
+
+    #user_df['Risk Prediction'] = risk_labels(user_pred[0])
 
 
     # Show the predicted volume
     st.subheader("Predicted 10 Year Coronary Heart Disease Risk from Uploaded CSV:")
-    st.dataframe(user_df)
+    st.dataframe(styled_user_df)
     st.info("Prediction column is on the far right")
-    st.session_state["CSV with Predictions"] = user_df
+    st.session_state["CSV with Predictions"] = user_df #NOTE store the unstyled one since the styled formatting causes issues in the reccomendations page

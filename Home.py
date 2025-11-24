@@ -19,11 +19,12 @@ st.set_page_config(page_title="Home", page_icon="❤️")   # change icon to hea
 # Centered Title using HTML and Markdown
 st.markdown(
     """
-    <h2 style = "text-align: center; color: #69503c;">10 Year Coronary Heart Disease Risk Predictor</h2>
+    <h2 style = "text-align: center; color: #F7B32B;">10 Year Coronary Heart Disease Risk Predictor</h2>
     """,
     unsafe_allow_html = True,
 )
-
+st.image("HomeImage.webp")
+st.write("Coronary heart disease occurs when fatty deposits (plaque) build up in the arteries of the heart, resulting in narrowing and a lack of oxygen-rich blood reaching the heart muscle. Coronary heart disease is also referred to as coronary artery disease or ischemic heart disease. It is the most common type of heart disease.")
 # Initialize session state keys
 # male,age,education,currentSmoker,cigsPerDay,BPMeds,prevalentStroke,prevalentHyp,diabetes,totChol,sysBP,diaBP,BMI,heartRate,glucose,TenYearCHD
 
