@@ -16,8 +16,15 @@ if 'form_submitted' not in st.session_state:
 #     st.stop()
 
 # Select Model and save to session state
-model_type = st.selectbox("Select Your Machine Learning Model", options=["Decision Tree", "Soft Vote Classifier", "AdaBoost"],value=st.session_state.get('model_type'))
-st.session_state['model_type'] = model_type
+options = ["Decision Tree", "Soft Vote Classifier", "AdaBoost"]
+model_type = st.selectbox("Select Your Machine Learning Model", options=options, index=None)
+
+if model_type is None:
+    st.warning("Please select which machine learning model you would like to use.")
+    #pause execution until a model is selected
+    st.stop()
+else:
+    st.session_state['model_type'] = model_type
 
 # load the correct model
 if st.session_state.get('model_type')=="Decision Tree":
@@ -96,16 +103,19 @@ if st.session_state['input_type'] == 'Form' and st.session_state['form_submitted
     # Get probability of the predicted class
     proba = clf.predict_proba(user_encoded_df)
     class_index = list(clf.classes_).index(prediction_class)
-    predicted_class_proba = proba[class_index]
+    #st.write(proba)                                                 # for debugging, remove later
+    predicted_class_proba = proba[0, class_index]           #[0][class_index]
 
     # Show the predicted species on the app
     st.subheader("Predicting The Individual's 10 Year Coronary Heart Disease Risk")
     if new_prediction[0]==1:
         st.success(f'We predict the individual is at risk.'
-                    f'(Probability: {predicted_class_proba[0]:.2f})')
+                    f'(Probability: {predicted_class_proba:.2f})')
     if new_prediction[0]==0:
         st.success(f'We predict the individual is not risk.'
-                    f'(Probability: {predicted_class_proba[0]:.2f})')
+                    f'(Probability: {predicted_class_proba:.2f})')
+    
+    st.info("Note: Decision Tree models are generally more confident (closer to 0 or 1) compared to the other models. This is due to the nature of decision trees making hard splits based on feature values.")
 
     st.session_state['Form Prediction'] = new_prediction[0]
 # if uploading CSV and it was uploaded successfully

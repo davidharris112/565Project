@@ -32,7 +32,7 @@ if 'default_df' not in st.session_state:
 if 'input_type' not in st.session_state:
     st.session_state['input_type'] = 'Form'  # Default input type
 if 'model_type' not in st.session_state:
-    st.session_state['model_type'] = "Decision Tree"
+    st.session_state['model_type'] = None           # NOTE needs checking later
 
 
 if 'male' not in st.session_state:
