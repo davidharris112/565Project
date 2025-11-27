@@ -9,11 +9,11 @@ st.set_page_config(page_title = "Reccomendations")
 
 if st.session_state['csv'] == False and  st.session_state['form_submitted']==False:
     st.warning("Make sure you have entered data first.")
-    st.stop
+    st.stop()
 
 if st.session_state['model_type']==None:
     st.warning("Make sure you have selected a prediction model.")
-    st.stop
+    st.stop()
 
 
 
