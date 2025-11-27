@@ -24,7 +24,11 @@ st.markdown(
     unsafe_allow_html = True,
 )
 st.image("HomeImage.webp")
+st.caption("[Image Source](https://guysandstthomasspecialistcare.co.uk/news/what-is-coronary-heart-disease/)")
+
+
 st.write("Coronary heart disease occurs when fatty deposits (plaque) build up in the arteries of the heart, resulting in narrowing and a lack of oxygen-rich blood reaching the heart muscle. Coronary heart disease is also referred to as coronary artery disease or ischemic heart disease. It is the most common type of heart disease.")
+st.write("This tool uses several machine learning models to predict 10-year coronary heart disease risk.")
 # Initialize session state keys
 # male,age,education,currentSmoker,cigsPerDay,BPMeds,prevalentStroke,prevalentHyp,diabetes,totChol,sysBP,diaBP,BMI,heartRate,glucose,TenYearCHD
 

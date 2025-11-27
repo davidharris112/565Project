@@ -112,7 +112,7 @@ if st.session_state['input_type'] == 'Form' and st.session_state['form_submitted
         st.success(f'We predict the individual is at risk.'
                     f'(Probability: {predicted_class_proba:.2f})')
     if new_prediction[0]==0:
-        st.success(f'We predict the individual is not risk.'
+        st.success(f'We predict the individual is not at risk.'
                     f'(Probability: {predicted_class_proba:.2f})')
     
     st.info("Note: Decision Tree models are generally more confident (closer to 0 or 1) compared to the other models. This is due to the nature of decision trees making hard splits based on feature values.")
