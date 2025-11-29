@@ -31,21 +31,22 @@ else:
 
 
 # Get path relative to current script
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
 
 # load the correct model
 if st.session_state.get('model_type')=="Decision Tree":
-    pickle_path = os.path.join(BASE_DIR, "decision_tree_chd.pickle")
+    pickle_path = os.path.join(ROOT_DIR, "decision_tree_chd.pickle")
     with open(pickle_path, 'rb') as model_file:
         clf = pickle.load(model_file)
         model_file.close()
 if st.session_state.get('model_type')=="Soft Vote Classifier":
-    pickle_path = os.path.join(BASE_DIR, "SoftVote_chd.pickle")
+    pickle_path = os.path.join(ROOT_DIR, "SoftVote_chd.pickle")
     with open(pickle_path, 'rb') as model_file:
         clf = pickle.load(model_file)
         model_file.close()
 if st.session_state.get('model_type')=="AdaBoost":
-    pickle_path = os.path.join(BASE_DIR, "AdaBoost_chd.pickle")
+    pickle_path = os.path.join(ROOT_DIR, "AdaBoost_chd.pickle")
     with open(pickle_path, 'rb') as model_file:
         clf = pickle.load(model_file)
         model_file.close()
