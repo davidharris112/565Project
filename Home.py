@@ -89,7 +89,6 @@ if 'csv' not in st.session_state:
 
 
 
-
 # NOTE old code, moved and adapted to the other pages
 
 # # Set up the title and description of the app
