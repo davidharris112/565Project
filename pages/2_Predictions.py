@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import pickle
 import warnings
+import os
 warnings.filterwarnings('ignore')
 
 st.set_page_config(page_title = "Make Predictions", page_icon = "🔎")
@@ -15,6 +16,8 @@ if 'form_submitted' not in st.session_state:
 #     st.warning("Please fill out the form on the 'Upload Data' page before viewing predictions.")
 #     st.stop()
 
+
+
 # Select Model and save to session state
 options = ["Decision Tree", "Soft Vote Classifier", "AdaBoost"]
 model_type = st.selectbox("Select Your Machine Learning Model", options=options, index=None)
@@ -26,19 +29,31 @@ if model_type is None:
 else:
     st.session_state['model_type'] = model_type
 
+
+# Get path relative to current script
+BASE_DIR = os.path.dirname(__file__)
+
 # load the correct model
 if st.session_state.get('model_type')=="Decision Tree":
-    with open('decision_tree_chd.pickle', 'rb') as model_file:
+    pickle_path = os.path.join(BASE_DIR, "decision_tree_chd.pickle")
+    with open(pickle_path, 'rb') as model_file:
         clf = pickle.load(model_file)
+        model_file.close()
 if st.session_state.get('model_type')=="Soft Vote Classifier":
-    with open('SoftVote_chd.pickle', 'rb') as model_file:
+    pickle_path = os.path.join(BASE_DIR, "SoftVote_chd.pickle")
+    with open(pickle_path, 'rb') as model_file:
         clf = pickle.load(model_file)
+        model_file.close()
 if st.session_state.get('model_type')=="AdaBoost":
-    with open('AdaBoost_chd.pickle', 'rb') as model_file:
+    pickle_path = os.path.join(BASE_DIR, "AdaBoost_chd.pickle")
+    with open(pickle_path, 'rb') as model_file:
         clf = pickle.load(model_file)
+        model_file.close()
 # NOTE I don't think the "else" is necessary since we start with a default value for model_type in the session state
 # else:
 #     st.warning("Please select which machine learning model you would like to use.")
+
+
 
 # in the case that no csv or form was submitted:
 if st.session_state['csv'] is False and st.session_state['form_submitted'] == False:
