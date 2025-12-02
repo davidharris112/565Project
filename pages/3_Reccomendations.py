@@ -37,7 +37,6 @@ if st.session_state['model_type']==None:
 
 
 
-
 # Loop for form inputs
 if st.session_state['input_type'] == 'Form' and st.session_state['form_submitted'] == True:
     # user_data = {

@@ -12,7 +12,10 @@ st.session_state['input_type'] = input_type
 if input_type== 'Form':
     with st.form("user_input_form"):    
 
-        male = st.toggle('Male?') 
+        sex = st.radio('Sex', options=['Male', 'Female'])
+        male = 1 if sex == 'Male' else 0
+
+
         age = st.number_input('Age (in years)', help="Age in years")
         # TODO confirm education level categories 
         education = st.selectbox('Education Level', options = [1,2,3,4], help="1 = Some High School , 2 = High School Graduate , 3 = Some College , 4 = College Graduate")

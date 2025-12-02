@@ -32,8 +32,7 @@ else:
 
 # Get path relative to current script
 BASE_DIR = os.path.dirname(__file__)
-#BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-#ROOT_DIR = os.path.dirname(BASE_DIR)
+
 
 # load the correct model
 if st.session_state.get('model_type')=="Decision Tree":
@@ -174,7 +173,7 @@ if st.session_state['input_type'] == 'CSV Upload' and st.session_state['csv'] ==
     risk_labels = {1: "At Risk", 0: "Not At Risk"}
     user_df['Risk Prediction'] = user_df['Risk Prediction'].map(risk_labels)
 
-    # NOTE colormap code from the midterm project (I originally used chatgpt to help with it in the midterm app)
+    # NOTE colormap code from the midterm project
     color_map = {"At Risk": "red", "Not At Risk": "green"}
     styled_user_df = user_df.style.applymap(
         lambda val: f'background-color: {color_map.get(val, "white")}',
